@@ -6,10 +6,18 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.HashMap;
 
+class Primary {
+    public static void main(String[] args) throws IOException {  
+        EmailExtraction ext = new EmailExtraction(args[0]);
+        ext.printStats();
+    }
+}
+
 class EmailExtraction {
-    public static void main(String[] args) throws IOException {
-        HashMap<String, Integer> frequencies = new HashMap<String, Integer>();
-        Path path = Paths.get(args[0]);
+    HashMap<String, Integer> frequencies = new HashMap<String, Integer>();
+
+    EmailExtraction(String filepath) throws IOException {
+        Path path = Paths.get(filepath);
         String input = Files.readString(path);
         Pattern pattern = Pattern.compile("(?<=\\s|^)[\\w.'_%+-]+@(\\w+(\\.\\w+)+)(?=\\s|$)");
         Matcher matcher = pattern.matcher(input);
@@ -17,28 +25,34 @@ class EmailExtraction {
         while(hasMatch) {
             hasMatch = matcher.find();
             if(hasMatch) {
-                if(!frequencies.containsKey(matcher.group(1))) {
-                    frequencies.put(matcher.group(1), 1);
+                if(!this.frequencies.containsKey(matcher.group(1))) {
+                    this.frequencies.put(matcher.group(1), 1);
                 } else {
-                    frequencies.put(matcher.group(1), frequencies.get(matcher.group(1)) + 1);
+                    this.frequencies.put(matcher.group(1), this.frequencies.get(matcher.group(1)) + 1);
                 }
-                if(matcher.group(1).equals("corndel.com")) {System.out.println();}
             }
         }
-        for(String i:frequencies.keySet()) {
+    }
+
+    public void printStats() {
+        for(String i:this.frequencies.keySet()) {
             System.out.print(i);
             System.out.print(": ");
-            System.out.println(frequencies.get(i));
+            System.out.println(this.frequencies.get(i));
         }
+    }
+}
 
-        // Pattern pattern2 = Pattern.compile("\\s([\\w.'_%+-]+@corndel.com)\\s");
-        // Matcher matcher2 = pattern2.matcher(input);
-        // hasMatch = true;
-        // while(hasMatch) {
-        //     hasMatch = matcher2.find();
-        //     if(hasMatch) {
-        //         System.out.println(matcher2.group(1));
-        //     }
-        // }
+class Stat {
+    int frequency;
+    String domain;
+
+    public Stat(int _frequency, String _domain) {
+        frequency = _frequency;
+        domain = _domain;
+    };
+
+    public boolean greater(Stat s) {
+        return this.frequency > s.frequency;
     }
 }
