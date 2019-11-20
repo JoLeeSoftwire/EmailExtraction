@@ -11,7 +11,7 @@ class EmailExtraction {
         HashMap<String, Integer> frequencies = new HashMap<String, Integer>();
         Path path = Paths.get(args[0]);
         String input = Files.readString(path);
-        Pattern pattern = Pattern.compile("\\s[\\w.'_%+-]+@(\\w+.\\w+)\\s");
+        Pattern pattern = Pattern.compile("(?<=\\s|^)[\\w.'_%+-]+@(\\w+(\\.\\w+)+)(?=\\s|$)");
         Matcher matcher = pattern.matcher(input);
         var hasMatch = true;
         while(hasMatch) {
@@ -22,7 +22,7 @@ class EmailExtraction {
                 } else {
                     frequencies.put(matcher.group(1), frequencies.get(matcher.group(1)) + 1);
                 }
-                // System.out.println(matcher.group());
+                if(matcher.group(1).equals("corndel.com")) {System.out.println();}
             }
         }
         for(String i:frequencies.keySet()) {
@@ -30,5 +30,15 @@ class EmailExtraction {
             System.out.print(": ");
             System.out.println(frequencies.get(i));
         }
+
+        // Pattern pattern2 = Pattern.compile("\\s([\\w.'_%+-]+@corndel.com)\\s");
+        // Matcher matcher2 = pattern2.matcher(input);
+        // hasMatch = true;
+        // while(hasMatch) {
+        //     hasMatch = matcher2.find();
+        //     if(hasMatch) {
+        //         System.out.println(matcher2.group(1));
+        //     }
+        // }
     }
 }
