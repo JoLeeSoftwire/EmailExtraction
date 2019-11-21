@@ -9,12 +9,14 @@ import java.util.HashMap;
 class Primary {
     public static void main(String[] args) throws IOException {  
         EmailExtraction ext = new EmailExtraction(args[0]);
+        ext.sort();
         ext.printStats();
     }
 }
 
 class EmailExtraction {
     HashMap<String, Integer> frequencies = new HashMap<String, Integer>();
+    Stat[] sorted;
 
     EmailExtraction(String filepath) throws IOException {
         Path path = Paths.get(filepath);
@@ -41,9 +43,20 @@ class EmailExtraction {
             System.out.println(this.frequencies.get(i));
         }
     }
+
+    public void sort() {
+        Stat[] mapAsArray = new Stat[this.frequencies.size()];
+        int firstEmpty = 0;
+        for(String i:this.frequencies.keySet()) {
+            mapAsArray[firstEmpty] = new Stat(this.frequencies.get(i), i);
+            firstEmpty++;
+        }
+        java.util.Arrays.sort(mapAsArray);
+        this.sorted = mapAsArray;
+    }
 }
 
-class Stat {
+class Stat implements Comparable<Stat>{
     int frequency;
     String domain;
 
@@ -52,7 +65,8 @@ class Stat {
         domain = _domain;
     };
 
-    public boolean greater(Stat s) {
-        return this.frequency > s.frequency;
+    @Override
+    public int compareTo(Stat s) {
+        return this.frequency - s.frequency;
     }
 }
